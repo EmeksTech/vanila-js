@@ -41,3 +41,64 @@ const b_text = document.getElementById("b_text");
 const c_text = document.getElementById("c_text");
 const d_text = document.getElementById("d_text");
 const submitBtn = document.getElementById("submit");
+
+
+//initialize the variables
+let currentQuiz = 0;
+let score = 0;
+
+//display questions
+loadQuiz();
+
+//function to load quize
+function loadQuiz() {
+    deselectAnswers();
+
+    const currentQuizData = quizData[currentQuiz];
+    console.log(currentQuizData)
+    questionEl.innerHTML = currentQuizData.question
+    a_text.innerHTML = currentQuizData.a
+    b_text.innerHTML = currentQuizData.b
+    c_text.innerHTML = currentQuizData.c
+    d_text.innerHTML = currentQuizData.d
+
+}
+
+//unchecked the options
+function deselectAnswers() {
+    answerEls.forEach(answerEl => answerEl.checked = false);
+}
+
+
+// get selected option
+function getSelected() {
+    let answer;
+
+    answerEls.forEach(answerEl => {
+        if (answerEl.checked) {
+            answer = answerEl.id
+        }
+    })
+    return answer;
+}
+
+
+submitBtn.addEventListener('click', () => {
+    const answer = getSelected();
+    if (answer) {
+        if (answer === quizData[currentQuiz].correct) {
+            score++;
+        }
+        currentQuiz++;
+
+        if (currentQuiz < quizData.length) { 
+            loadQuiz()
+        } else {
+            quiz.innerHTML = `
+            <h2>You answered ${score}/${quizData.length} questions correctly</h2>
+            <button onclick ="location.reload()">Reload</button>
+            `
+         }
+    }
+})
+
