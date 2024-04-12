@@ -7,3 +7,67 @@ const SEARCH_API =
 const main = document.getElementById("main");
 const form = document.getElementById("form");
 const search = document.getElementById("search");
+
+//get initial movies
+getMovies(API_URL);
+
+//assynchronous request for the movies
+async function getMovies(url) {
+    const res = await fetch(url)
+    const data = await res.json();
+
+    //function to display the movies
+    showMovies(data.results);
+}
+
+//function to display the movies
+function showMovies(movies) { 
+    console.log(movies)
+    main.innerHTML = '';
+    movies.forEach((movie) => {
+        const { title, poster_path, vote_average, overview } = movie;
+
+        const MovieElement = document.createElement('div');
+        MovieElement.classList.add('movie');
+
+        MovieElement.innerHTML = `
+        <img src="${IMG_PATH + poster_path}" alt="${title}" >
+        <div class="movie-info">
+            <h3>${title}</h3>
+            <span class="${getClassByRate(vote_average)}">${vote_average}</span>
+        </div>
+        <div class="overview">
+        <h3>Overview</h3>
+        ${overview}
+        </div>
+        `;
+        main.appendChild(MovieElement)
+
+    })  
+
+}
+ //get the rating
+function getClassByRate(vote) {
+    if (vote >= 8) {
+        return 'green';
+    } else if (vote >= 5) {
+        return 'orange';
+    } else {
+        return 'red';
+    }
+
+}
+//seaching for movies
+form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const searchTerm = search.value;
+
+    if (searchTerm && searchTerm !== '') {
+        getMovies(SEARCH_API + searchTerm)
+        
+        search.value = '';
+
+    } else {
+        window.location.reload();
+}
+    } )
